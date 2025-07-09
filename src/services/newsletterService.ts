@@ -140,19 +140,18 @@ export const generateNewsletterWithAI = async (rawInput: string, apiKey?: string
   }
 
   const imageSection = await generateImageSection(images);
-  const logoUrl = "https://via.placeholder.com/200x80/007bff/ffffff?text=NEUREALM";
+  const logoUrl = "https://chat.google.com/u/0/api/get_attachment_url?url_type=FIFE_URL&content_type=image%2Fpng&attachment_token=AOo0EEXxsdaLLnMPLGYM5E6Lt3Zlte0NlE4VB3Ml38itZuKa05Z4NkyJyhYaNFMYi74QW9HZbHyy8vT9KzmyvOnUN0uganO9MEPWxxFug9d46aC5xn0JvF5kakdAWXwenf4Pg6G0JrHGVQ9J%2FNo30PtQgPUtVaz%2BA%2BYU5SFrkWmNDsE2R0LPw%2BrLoW%2BPnmtmyRo%2FlLm4jzpCEdGUJBphTgembBNPkdCaPPkpOZnkTsqoXH03CRyM35PWhW2PcysSqUQzQBfJuIL6ALyjpVF7pDemF2pdwGiTihOaSgmFpwMiambqQiIDB%2F2dm4Yd6TK6oO%2FJ5FqHGh6zWz1zctwzfVd82PSkXEJWyitoTUdGKXigufG3G8ynf6s7LATFyasrpPi0wVxesyc416MireqQRtkonKT%2FMaWxUVrew%2BBLU5Xdo6itJZNYmCBQb6WTEPhW4eYVOW9vArscqjDVtfE%2B%2BWCdYvpe9mf4pJUqFzKzBDMM5JDEGwDUiwvwKNiALoty4T9J%2FkQKIK%2FibWPT99mgzf2GTy%2FXnrJElYcNlK9w1bB%2B88yVgtrSQhvTUBL2fyYpt2A%3D&allow_caching=true&sz=w1920-h912";
 
   const prompt = `
   You are an expert communication writer helping HR generate internal newsletters for Neurealm.
 
-  Take the following raw departmental notes and generate a structured, engaging newsletter in HTML format:
+  Take the following raw departmental notes and generate a structured, engaging newsletter in very professional format:
 
   ${rawInput}
 
   Requirements:
   - Use "Neuronauts" as the greeting term for employees
   - Use "Neurealm" as the organization name throughout
-  - Create a complete HTML document with proper structure
   - Include a header with company logo (use this URL: ${logoUrl}) and newsletter title
   - Include the following image section after Key Highlights: ${imageSection}
   - Organize content into logical sections with these headers:
@@ -164,7 +163,6 @@ export const generateNewsletterWithAI = async (rawInput: string, apiKey?: string
   - Use inline CSS for professional styling with modern design
   - Use a friendly but professional tone suitable for company-wide internal audience
   - Improve grammar, clarity, and formatting
-  - Return a complete HTML document ready for viewing/emailing
 
   Make it visually appealing with proper spacing, colors, and typography. Use gradients and modern styling.
 `;
