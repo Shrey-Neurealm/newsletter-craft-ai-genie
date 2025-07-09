@@ -6,7 +6,24 @@ interface NewsletterPreviewProps {
 }
 
 const NewsletterPreview = ({ content }: NewsletterPreviewProps) => {
-  // Convert markdown-style content to HTML for display
+  // Check if content is HTML or plain text
+  const isHtml = content.trim().startsWith('<!DOCTYPE html>') || content.trim().startsWith('<html');
+  
+  if (isHtml) {
+    // For HTML content, display in an iframe for proper rendering
+    return (
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden min-h-[300px] max-h-[600px]">
+        <iframe
+          srcDoc={content}
+          className="w-full h-[580px] border-0"
+          title="Newsletter Preview"
+          sandbox="allow-same-origin"
+        />
+      </div>
+    );
+  }
+
+  // Fallback for markdown content (existing functionality)
   const formatContent = (text: string) => {
     return text
       .replace(/^### (.*$)/gm, '<h3 class="text-lg font-semibold mt-6 mb-3 text-blue-600 dark:text-blue-400">$1</h3>')

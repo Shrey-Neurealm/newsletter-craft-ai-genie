@@ -15,12 +15,18 @@ const Index = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [apiKey, setApiKey] = useState('');
+  const [savedDrafts, setSavedDrafts] = useState<string[]>([]);
 
   useEffect(() => {
-    // Load API key from localStorage on component mount
+    // Load API key and saved drafts from localStorage on component mount
     const savedApiKey = localStorage.getItem('gemini-api-key');
     if (savedApiKey) {
       setApiKey(savedApiKey);
+    }
+
+    const drafts = localStorage.getItem('newsletter-drafts');
+    if (drafts) {
+      setSavedDrafts(JSON.parse(drafts));
     }
   }, []);
 
@@ -43,6 +49,12 @@ const Index = () => {
         newsletter = await generateNewsletter(rawInput);
       }
       setGeneratedNewsletter(newsletter);
+      
+      // Save to localStorage
+      const newDrafts = [newsletter, ...savedDrafts.slice(0, 4)]; // Keep last 5 drafts
+      setSavedDrafts(newDrafts);
+      localStorage.setItem('newsletter-drafts', JSON.stringify(newDrafts));
+      
       toast({
         title: "Newsletter Generated!",
         description: apiKey ? "AI-powered newsletter generated successfully." : "Mock newsletter generated (configure AI API key for real AI processing).",
@@ -74,13 +86,21 @@ const Index = () => {
     }
   };
 
-  const handleDownloadPDF = () => {
-    // Create a simple text file download as a placeholder for PDF functionality
-    const blob = new Blob([generatedNewsletter], { type: 'text/plain' });
+  const handleDownloadHTML = () => {
+    if (!generatedNewsletter) {
+      toast({
+        title: "No Content",
+        description: "Please generate a newsletter first.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const blob = new Blob([generatedNewsletter], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `newsletter-${new Date().toISOString().split('T')[0]}.txt`;
+    a.download = `neurealm-newsletter-${new Date().toISOString().split('T')[0]}.html`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -88,7 +108,7 @@ const Index = () => {
     
     toast({
       title: "Downloaded!",
-      description: "Newsletter downloaded as text file. PDF feature coming soon.",
+      description: "Newsletter downloaded as HTML file.",
     });
   };
 
@@ -189,10 +209,11 @@ const Index = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={handleDownloadPDF}
+                      onClick={handleDownloadHTML}
+                      title="Download as HTML"
                     >
                       <Download className="h-4 w-4 mr-1" />
-                      Download
+                      HTML
                     </Button>
                     <Button
                       variant="outline"
@@ -246,6 +267,33 @@ const Index = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Saved Drafts Section */}
+        {savedDrafts.length > 0 && (
+          <Card className="mt-8 shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-lg">Recent Drafts</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {savedDrafts.slice(0, 3).map((draft, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      Draft {index + 1} - {new Date().toLocaleDateString()}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setGeneratedNewsletter(draft)}
+                    >
+                      Load
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
