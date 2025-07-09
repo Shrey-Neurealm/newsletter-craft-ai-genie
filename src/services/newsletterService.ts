@@ -58,7 +58,12 @@ export const generateNewsletterWithAI = async (rawInput: string, apiKey?: string
     throw new Error('API key required for AI generation');
   }
 
-  const prompt = `You are an expert communication writer helping HR generate internal newsletters.
+  const prompt = `
+  # Neurealm Newsletter - ${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+
+  for greetings please use Neuronauts
+  
+  You are an expert communication writer helping HR generate internal newsletters.
 
 Take the following raw departmental notes and generate a structured, engaging newsletter:
 
@@ -72,10 +77,13 @@ Please organize into logical sections with clear headers such as:
 
 Use a friendly but professional tone suitable for a company-wide internal audience.
 Improve grammar, clarity, and formatting.
-Return the result in markdown format.`;
+Return the result in markdown format.
+please consider Neurealm as our organisation/comany name. So whenevet you generate a response with company/organisation name then please use Nuerealm.
+
+`;
 
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=AIzaSyDIrtfIRLQk1aSgBqi0gl7g9alCk3mIT3I`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
