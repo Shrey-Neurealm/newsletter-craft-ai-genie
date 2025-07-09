@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# Welcome to our AI generated newsletter project
 
 ## Project info
 
@@ -7,12 +7,6 @@
 ## How can I edit this code?
 
 There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/2f58e90c-978e-4a43-b559-3cd6842f56fa) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
 
 **Use your preferred IDE**
 

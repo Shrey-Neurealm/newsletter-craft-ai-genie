@@ -75,12 +75,10 @@ Improve grammar, clarity, and formatting.
 Return the result in markdown format.`;
 
   try {
-    // This would be the actual API call to Google's Gemini API
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=AIzaSyDIrtfIRLQk1aSgBqi0gl7g9alCk3mIT3I`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         contents: [{
