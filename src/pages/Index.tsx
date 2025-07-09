@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Copy, FileText, Sparkles, Moon, Sun, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,7 @@ import { toast } from '@/hooks/use-toast';
 import NewsletterPreview from '@/components/NewsletterPreview';
 import ApiKeyDialog from '@/components/ApiKeyDialog';
 import { generateNewsletter, generateNewsletterWithAI } from '@/services/newsletterService';
+import ImageUpload from '@/components/ImageUpload';
 
 const Index = () => {
   const [rawInput, setRawInput] = useState('');
@@ -16,6 +16,7 @@ const Index = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [apiKey, setApiKey] = useState('');
   const [savedDrafts, setSavedDrafts] = useState<string[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
 
   useEffect(() => {
     // Load API key and saved drafts from localStorage on component mount
@@ -44,9 +45,9 @@ const Index = () => {
     try {
       let newsletter;
       if (apiKey) {
-        newsletter = await generateNewsletterWithAI(rawInput, apiKey);
+        newsletter = await generateNewsletterWithAI(rawInput, apiKey, uploadedImages);
       } else {
-        newsletter = await generateNewsletter(rawInput);
+        newsletter = await generateNewsletter(rawInput, uploadedImages);
       }
       setGeneratedNewsletter(newsletter);
       
@@ -149,52 +150,60 @@ const Index = () => {
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Input Section */}
-          <Card className="shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <FileText className="h-5 w-5 text-blue-600" />
-                <span>Raw Content Input</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label htmlFor="raw-input" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Paste your departmental updates, announcements, and achievements:
-                </label>
-                <Textarea
-                  id="raw-input"
-                  placeholder="Example:&#10;- Sales team exceeded Q3 targets by 15%&#10;- New employee onboarding program launched&#10;- Holiday party scheduled for Dec 15th&#10;- IT department completed security audit&#10;- Marketing campaign generated 200 new leads"
-                  value={rawInput}
-                  onChange={(e) => setRawInput(e.target.value)}
-                  className="min-h-[300px] resize-none"
-                />
-              </div>
-              <div className="flex space-x-3">
-                <Button
-                  onClick={handleGenerate}
-                  disabled={isGenerating || !rawInput.trim()}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700"
-                >
-                  {isGenerating ? (
-                    <>
-                      <Sparkles className="h-4 w-4 mr-2 animate-spin" />
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-4 w-4 mr-2" />
-                      Generate Newsletter
-                    </>
-                  )}
-                </Button>
-              </div>
-              {!apiKey && (
-                <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 p-2 rounded">
-                  💡 Configure your Google AI API key in settings for real AI processing
+          <div className="space-y-6">
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <FileText className="h-5 w-5 text-blue-600" />
+                  <span>Raw Content Input</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label htmlFor="raw-input" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Paste your departmental updates, announcements, and achievements:
+                  </label>
+                  <Textarea
+                    id="raw-input"
+                    placeholder="Example:&#10;- Sales team exceeded Q3 targets by 15%&#10;- New employee onboarding program launched&#10;- Holiday party scheduled for Dec 15th&#10;- IT department completed security audit&#10;- Marketing campaign generated 200 new leads"
+                    value={rawInput}
+                    onChange={(e) => setRawInput(e.target.value)}
+                    className="min-h-[300px] resize-none"
+                  />
                 </div>
-              )}
-            </CardContent>
-          </Card>
+                <div className="flex space-x-3">
+                  <Button
+                    onClick={handleGenerate}
+                    disabled={isGenerating || !rawInput.trim()}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Sparkles className="h-4 w-4 mr-2 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        Generate Newsletter
+                      </>
+                    )}
+                  </Button>
+                </div>
+                {!apiKey && (
+                  <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 p-2 rounded">
+                    💡 Configure your Google AI API key in settings for real AI processing
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Image Upload Section */}
+            <ImageUpload 
+              images={uploadedImages}
+              onImagesChange={setUploadedImages}
+            />
+          </div>
 
           {/* Output Section */}
           <Card className="shadow-lg">
